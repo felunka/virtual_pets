@@ -1,9 +1,9 @@
 class TeamMember < ApplicationRecord
-	has_many :pets, dependent: :destroy
+  has_many :pets, dependent: :destroy
 
-	validates :name, presence: true,
-									 uniqueness: { case_sensitive: false },
-									 length: { maximum: 60 }
+  validates :name, presence: true,
+                   uniqueness: { case_sensitive: false },
+                   length: { maximum: 60 }
 
-	scope :alphabetical, -> { order(Arel.sql("lower(name) ASC")) }
+  scope :alphabetical, -> { order(Arel.sql("lower(name) ASC")) }
 end
