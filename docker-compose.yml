@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:13.1-alpine
+    hostname: ${POSTGRES_HOSTNAME:-db}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: virtual_pets
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+  web:
+    build: .
+    networks:
+      - reverse_proxy
+      - default
+    depends_on:
+      - db
+    volumes:
+      - storage:/app/storage
+    environment:
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:?err}
+      POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME:-db}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      GITHUB_RELEASE_VERSION: ${GITHUB_RELEASE_VERSION:-not_set}
+      DOMAIN: ${DOMAIN:?err}
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: 'true'
+      RAILS_LOG_TO_STDOUT: 'true'
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=reverse_proxy
+      - traefik.http.routers.${ROUTER_NAME:-virtual_pets}.rule=Host(`${DOMAIN:?err}`)
+      - traefik.http.routers.${ROUTER_NAME:-virtual_pets}.tls.certresolver=letsencrypt
+volumes:
+  db-data:
+  storage:
+networks:
+  reverse_proxy:
+    name: reverse_proxy

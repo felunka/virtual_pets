@@ -1,9 +1,25 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+members = [
+	{
+		name: "Alex",
+		pets: [
+			{ name: "Sports Spark", mood: 6, description: "Do sports 2x per week", picture: "🏃" },
+			{ name: "Code Owl", mood: 8, description: "Ship one clean refactor weekly", picture: "🦉" }
+		]
+	},
+	{
+		name: "Nina",
+		pets: [
+			{ name: "Hydra", mood: 7, description: "Drink enough water every day", picture: "🐉" }
+		]
+	}
+]
+
+members.each do |member_data|
+	member = TeamMember.find_or_create_by!(name: member_data[:name])
+
+	member_data[:pets].each do |pet_data|
+		member.pets.find_or_create_by!(name: pet_data[:name]) do |pet|
+			pet.assign_attributes(pet_data)
+		end
+	end
+end

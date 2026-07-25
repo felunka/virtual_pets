@@ -1,0 +1,13 @@
+sports_spark:
+  team_member: alex
+  name: Sports Spark
+  mood: 6
+  description: Do sports 2x per week
+  picture: "🏃"
+
+code_owl:
+  team_member: alex
+  name: Code Owl
+  mood: 8
+  description: Ship one clean refactor weekly
+  picture: "🦉"

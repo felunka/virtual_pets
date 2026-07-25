@@ -1,0 +1,160 @@
+<% content_for :title, "Team Zuwachs" %>
+
+<div class="app-shell">
+	<% if flash[:notice] %>
+		<p class="flash flash-notice"><%= flash[:notice] %></p>
+	<% end %>
+	<% if flash[:alert] %>
+		<p class="flash flash-alert"><%= flash[:alert] %></p>
+	<% end %>
+
+	<header class="app-header">
+		<h1>Team Zuwachs</h1>
+		<div class="header-actions">
+			<% if current_team_member %>
+				<span class="current-member-chip">You are: <strong><%= current_team_member.name %></strong></span>
+				<%= button_to "Switch", clear_team_members_path, method: :delete, class: "ghost-button" %>
+			<% end %>
+		</div>
+	</header>
+
+	<section
+		class="mind-map-scene"
+		data-controller="mind-map"
+		data-mind-map-current-member-id-value="<%= current_team_member&.id %>">
+		<svg class="mind-map-lines" data-mind-map-target="lineLayer"></svg>
+
+		<button class="node node-center" data-node-id="center" type="button">
+			Team Zuwachs
+		</button>
+
+		<% @team_members.each do |member| %>
+			<button
+				class="node node-member <%= "node-own-member" if current_team_member&.id == member.id %>"
+				data-node-id="member-<%= member.id %>"
+				data-node-kind="member"
+				data-member-id="<%= member.id %>"
+				type="button">
+				<span><%= member.name %></span>
+			</button>
+
+			<% member.pets.order(:created_at).each do |pet| %>
+				<% mood_ratio = pet.mood.to_i.clamp(0, 10) * 10 %>
+				<% mood_hue = pet.mood.to_i.clamp(0, 10) * 12 %>
+				<button
+					class="node node-pet"
+					data-node-id="pet-<%= pet.id %>"
+					data-node-kind="pet"
+					data-pet-id="<%= pet.id %>"
+					data-owner-id="<%= member.id %>"
+					data-editable="<%= current_team_member&.id == member.id %>"
+					data-pet-name="<%= pet.name %>"
+					data-pet-description="<%= pet.description.to_s %>"
+					data-pet-picture="<%= pet.picture %>"
+					data-pet-mood="<%= pet.mood %>"
+					style="--mood-percent: <%= mood_ratio %>%; --mood-hue: <%= mood_hue %>;"
+					type="button">
+					<span class="pet-emoji"><%= pet.picture %></span>
+					<span class="pet-name"><%= pet.name %></span>
+				</button>
+			<% end %>
+
+			<% if current_team_member&.id == member.id && member.pets.size < 3 %>
+				<button
+					class="node node-pet node-pet-new"
+					data-node-id="new-pet-<%= member.id %>"
+					data-node-kind="new-pet"
+					data-owner-id="<%= member.id %>"
+					data-editable="true"
+					data-pet-picture="➕"
+					data-pet-name="Add pet"
+					data-pet-description=""
+					data-pet-mood="5"
+					style="--mood-percent: 0%; --mood-hue: 210;"
+					type="button">
+					<span class="pet-emoji">➕</span>
+					<span class="pet-name">Add pet</span>
+				</button>
+			<% end %>
+		<% end %>
+
+		<aside class="pet-editor" data-mind-map-target="panel" hidden>
+			<button class="panel-close" type="button" data-action="mind-map#closePanel">×</button>
+			<h2 data-mind-map-target="panelTitle">Pet</h2>
+
+			<p class="panel-readonly" data-mind-map-target="readonlyHint" hidden>
+				Read only: you can only edit your own pets.
+			</p>
+
+			<form action="/pets" method="post" data-mind-map-target="petForm">
+				<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+				<input type="hidden" name="_method" value="post" data-mind-map-target="methodField">
+
+				<label>
+					Name
+					<input name="pet[name]" required maxlength="60" data-mind-map-target="nameInput">
+				</label>
+
+				<label>
+					Picture (Emoji)
+					<input name="pet[picture]" required maxlength="8" data-mind-map-target="pictureInput">
+				</label>
+
+				<label>
+					Mood: <output data-mind-map-target="moodOutput">5</output>
+					<input type="range" min="0" max="10" step="1" name="pet[mood]" value="5" data-action="input->mind-map#syncMood" data-mind-map-target="moodInput">
+				</label>
+
+				<label>
+					Description
+					<textarea name="pet[description]" rows="3" maxlength="500" data-mind-map-target="descriptionInput"></textarea>
+				</label>
+
+				<div class="panel-actions">
+					<button type="submit" class="solid-button" data-mind-map-target="saveButton">Save</button>
+				</div>
+			</form>
+
+			<form method="post" action="/pets/0" data-mind-map-target="deleteForm">
+				<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+				<input type="hidden" name="_method" value="delete">
+				<button type="submit" class="danger-button">Delete pet</button>
+			</form>
+		</aside>
+	</section>
+
+	<% unless team_member_selected? %>
+		<div class="member-overlay">
+			<div class="member-modal">
+				<h2>Welcome to Team Zuwachs</h2>
+				<p>Choose your team member or create a new one.</p>
+
+				<% if @team_members.any? %>
+					<div class="member-pick-form">
+						<p class="member-section-title">Select existing</p>
+						<div class="member-button-grid">
+							<% @team_members.each do |member| %>
+								<%= button_to member.name,
+													select_team_members_path(team_member_id: member.id),
+													method: :post,
+													class: "member-choice-button" %>
+							<% end %>
+						</div>
+					</div>
+				<% end %>
+
+				<%= form_with model: TeamMember.new, url: team_members_path, method: :post, class: "member-new-form" do |f| %>
+					<label class="member-name-label">
+						<span class="member-section-title">Or create new</span>
+						<%= f.text_field :name,
+									 required: true,
+									 maxlength: 60,
+									 placeholder: "Your name",
+									 class: "member-name-input" %>
+					</label>
+					<%= f.submit "Create & continue", class: "solid-button" %>
+				<% end %>
+			</div>
+		</div>
+	<% end %>
+</div>
