@@ -1,4 +1,4 @@
-<% content_for :title, "Team Zuwachs" %>
+<% content_for :title, "Team Wachstum" %>
 
 <div class="app-shell">
 	<% if flash[:notice] %>
@@ -9,7 +9,7 @@
 	<% end %>
 
 	<header class="app-header">
-		<h1>Team Zuwachs</h1>
+		<h1>Team Wachstum</h1>
 		<div class="header-actions">
 			<% if current_team_member %>
 				<span class="current-member-chip">You are: <strong><%= current_team_member.name %></strong></span>
@@ -25,7 +25,7 @@
 		<svg class="mind-map-lines" data-mind-map-target="lineLayer"></svg>
 
 		<button class="node node-center" data-node-id="center" type="button">
-			Team Zuwachs
+			Team Wachstum
 		</button>
 
 		<% @team_members.each do |member| %>
@@ -126,7 +126,7 @@
 	<% unless team_member_selected? %>
 		<div class="member-overlay">
 			<div class="member-modal">
-				<h2>Welcome to Team Zuwachs</h2>
+				<h2>Welcome to Team Wachstum</h2>
 				<p>Choose your team member or create a new one.</p>
 
 				<% if @team_members.any? %>
