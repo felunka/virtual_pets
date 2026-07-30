@@ -27,7 +27,7 @@ export class PetPanel {
     node.element.classList.add("is-selected")
 
     const isNew = node.kind === "new-pet"
-    const editable = node.element.dataset.editable === "true"
+    const editable = String(node.element.dataset.editable).trim().toLowerCase() === "true"
     const petId = node.element.dataset.petId
 
     this.targets.panelTitle.textContent = isNew ? "Create pet" : node.element.dataset.petName || "Pet"
@@ -49,11 +49,53 @@ export class PetPanel {
       this.targets.petForm.action = `/pets/${petId}`
       this.targets.methodField.value = "patch"
       this.targets.deleteForm.action = `/pets/${petId}`
-      this.targets.deleteForm.hidden = readOnly
+      this.targets.deleteForm.hidden = !editable
     }
 
     this.targets.panel.hidden = false
     this.targets.panel.classList.add("is-open")
+  }
+
+  syncNodeName(value) {
+    if (!this.selectedNode) return
+
+    const name = value
+    const fallback = this.selectedNode.kind === "new-pet" ? "Add pet" : "Pet"
+    const visibleName = name.length > 0 ? name : fallback
+
+    this.selectedNode.element.dataset.petName = name
+    const nameElement = this.selectedNode.element.querySelector(".pet-name")
+    if (nameElement) nameElement.textContent = visibleName
+
+    this.targets.panelTitle.textContent = this.selectedNode.kind === "new-pet" ? "Create pet" : visibleName
+  }
+
+  syncNodePicture(value) {
+    if (!this.selectedNode) return
+
+    const picture = value
+    const fallback = this.selectedNode.kind === "new-pet" ? "➕" : "🐣"
+    const visiblePicture = picture.length > 0 ? picture : fallback
+
+    this.selectedNode.element.dataset.petPicture = picture
+    const pictureElement = this.selectedNode.element.querySelector(".pet-emoji")
+    if (pictureElement) pictureElement.textContent = visiblePicture
+  }
+
+  syncNodeMood(value) {
+    if (!this.selectedNode) return
+
+    const mood = Number.parseInt(value, 10)
+    if (!Number.isFinite(mood)) return
+
+    const normalizedMood = Math.max(0, Math.min(10, mood))
+
+    this.selectedNode.element.dataset.petMood = String(normalizedMood)
+
+    if (this.selectedNode.kind !== "pet") return
+
+    this.selectedNode.element.style.setProperty("--mood-percent", `${normalizedMood * 10}%`)
+    this.selectedNode.element.style.setProperty("--mood-hue", `${normalizedMood * 12}`)
   }
 
   toggleEditorReadOnly(readOnly) {

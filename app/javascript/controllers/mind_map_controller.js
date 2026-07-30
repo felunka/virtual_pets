@@ -69,6 +69,7 @@ export default class extends Controller {
     })
     this.pointerInteractions.bind()
     this.bindNodeClicks()
+    this.bindOutsidePanelPointer()
     this.bindResize()
 
     if (!this.prefersReducedMotion) {
@@ -82,6 +83,7 @@ export default class extends Controller {
   disconnect() {
     this.unbindResize()
     this.unbindNodeClicks()
+    this.unbindOutsidePanelPointer()
     this.pointerInteractions?.unbind()
     if (this.animationFrame) cancelAnimationFrame(this.animationFrame)
   }
@@ -104,6 +106,15 @@ export default class extends Controller {
 
   syncMood(event) {
     this.panel.syncMood(event.currentTarget.value)
+    this.panel.syncNodeMood(event.currentTarget.value)
+  }
+
+  syncName(event) {
+    this.panel.syncNodeName(event.currentTarget.value)
+  }
+
+  syncPicture(event) {
+    this.panel.syncNodePicture(event.currentTarget.value)
   }
 
   bindResize() {
@@ -155,5 +166,20 @@ export default class extends Controller {
     })
 
     this.nodeClickHandlers = []
+  }
+
+  bindOutsidePanelPointer() {
+    this.handleOutsidePanelPointer = this.handleOutsidePanelPointer.bind(this)
+    document.addEventListener("pointerdown", this.handleOutsidePanelPointer)
+  }
+
+  unbindOutsidePanelPointer() {
+    document.removeEventListener("pointerdown", this.handleOutsidePanelPointer)
+  }
+
+  handleOutsidePanelPointer(event) {
+    if (this.panelTarget.hidden) return
+    if (this.panelTarget.contains(event.target)) return
+    this.closePanel()
   }
 }

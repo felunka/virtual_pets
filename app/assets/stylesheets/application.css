@@ -284,6 +284,10 @@ body {
 	gap: 0.7rem;
 }
 
+.pet-editor [hidden] {
+	display: none !important;
+}
+
 .pet-editor label {
 	display: grid;
 	gap: 0.3rem;
@@ -309,7 +313,19 @@ body {
 
 .panel-actions {
 	display: flex;
-	justify-content: flex-end;
+	align-items: stretch;
+	gap: 0.5rem;
+	padding-top: 0.35rem;
+	padding-bottom: 0.15rem;
+}
+
+.panel-save-button {
+	flex: 4;
+}
+
+.pet-delete-form {
+	flex: 1;
+	margin: 0;
 }
 
 .solid-button,
@@ -334,8 +350,9 @@ body {
 }
 
 .danger-button {
-	margin-top: 0.5rem;
-	background: #ff5b5b;
+	width: 100%;
+	margin-top: 0;
+	background: #ff8d8d;
 	color: #fff;
 }
 

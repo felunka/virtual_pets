@@ -94,18 +94,18 @@
 				Read only: you can only edit your own pets.
 			</p>
 
-			<form action="/pets" method="post" data-mind-map-target="petForm">
+			<form id="pet-editor-form" action="/pets" method="post" data-mind-map-target="petForm">
 				<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 				<input type="hidden" name="_method" value="post" data-mind-map-target="methodField">
 
 				<label>
 					Name
-					<input name="pet[name]" required maxlength="60" data-mind-map-target="nameInput">
+					<input name="pet[name]" required maxlength="60" data-action="input->mind-map#syncName" data-mind-map-target="nameInput">
 				</label>
 
 				<label>
 					Picture (Emoji)
-					<input name="pet[picture]" required maxlength="8" data-mind-map-target="pictureInput">
+					<input name="pet[picture]" required maxlength="8" data-action="input->mind-map#syncPicture" data-mind-map-target="pictureInput">
 					<small class="emoji-input-hint" data-mind-map-target="emojiHint" hidden></small>
 				</label>
 
@@ -119,16 +119,17 @@
 					<textarea name="pet[description]" rows="3" maxlength="500" data-mind-map-target="descriptionInput"></textarea>
 				</label>
 
-				<div class="panel-actions">
-					<button type="submit" class="solid-button" data-mind-map-target="saveButton">Save</button>
-				</div>
 			</form>
 
-			<form method="post" action="/pets/0" data-mind-map-target="deleteForm">
-				<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-				<input type="hidden" name="_method" value="delete">
-				<button type="submit" class="danger-button">Delete pet</button>
-			</form>
+			<div class="panel-actions">
+				<button type="submit" form="pet-editor-form" class="solid-button panel-save-button" data-mind-map-target="saveButton">Save</button>
+
+				<form method="post" action="/pets/0" data-mind-map-target="deleteForm" class="pet-delete-form">
+					<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+					<input type="hidden" name="_method" value="delete">
+					<button type="submit" class="danger-button">Delete</button>
+				</form>
+			</div>
 		</aside>
 	</section>
 
