@@ -67,11 +67,10 @@
 						data-node-kind="new-pet"
 						data-owner-id="<%= member.id %>"
 						data-editable="true"
-						data-pet-picture="➕"
+						data-pet-picture=""
 						data-pet-name="Add pet"
 						data-pet-description=""
 						data-pet-mood="5"
-						style="--mood-percent: 0%; --mood-hue: 210;"
 						type="button">
 						<span class="pet-emoji">➕</span>
 						<span class="pet-name">Add pet</span>
@@ -107,6 +106,7 @@
 				<label>
 					Picture (Emoji)
 					<input name="pet[picture]" required maxlength="8" data-mind-map-target="pictureInput">
+					<small class="emoji-input-hint" data-mind-map-target="emojiHint" hidden></small>
 				</label>
 
 				<label>

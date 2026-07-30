@@ -225,7 +225,7 @@ body {
 }
 
 .node-pet-new::before {
-	background: conic-gradient(#5da9ff 35%, rgba(255, 255, 255, 0.6) 0);
+	content: none;
 }
 
 .pet-emoji {
@@ -289,6 +289,12 @@ body {
 	gap: 0.3rem;
 	font-size: 0.95rem;
 	font-weight: 700;
+}
+
+.emoji-input-hint {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: rgba(45, 56, 84, 0.74);
 }
 
 .pet-editor input,

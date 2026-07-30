@@ -24,6 +24,7 @@ export default class extends Controller {
     "methodField",
     "nameInput",
     "pictureInput",
+    "emojiHint",
     "moodInput",
     "moodOutput",
     "descriptionInput",
@@ -113,6 +114,37 @@ export default class extends Controller {
 
   syncMood(event) {
     this.moodOutputTarget.textContent = event.currentTarget.value
+  }
+
+  detectPlatformKind() {
+    const platform = (navigator.userAgentData?.platform || navigator.platform || "").toLowerCase()
+    const userAgent = (navigator.userAgent || "").toLowerCase()
+    const fingerprint = `${platform} ${userAgent}`
+
+    if (/android|iphone|ipad|ipod|ios/.test(fingerprint)) return "mobile"
+    if (/win/.test(fingerprint)) return "win"
+    if (/mac|macintosh|mac os/.test(fingerprint)) return "mac"
+    return "unknown"
+  }
+
+  updateEmojiHint() {
+    if (!this.hasEmojiHintTarget) return
+
+    const platformKind = this.detectPlatformKind()
+    if (platformKind === "win") {
+      this.emojiHintTarget.textContent = "Hint: open emoji keyboard with WIN+."
+      this.emojiHintTarget.hidden = false
+      return
+    }
+
+    if (platformKind === "mac") {
+      this.emojiHintTarget.textContent = "Hint: open emoji keyboard with Fn+E."
+      this.emojiHintTarget.hidden = false
+      return
+    }
+
+    this.emojiHintTarget.textContent = ""
+    this.emojiHintTarget.hidden = true
   }
 
   collectNodes() {
@@ -736,10 +768,11 @@ export default class extends Controller {
 
     this.panelTitleTarget.textContent = isNew ? "Create pet" : node.element.dataset.petName || "Pet"
     this.nameInputTarget.value = isNew ? "" : node.element.dataset.petName || ""
-    this.pictureInputTarget.value = node.element.dataset.petPicture || "🐣"
+    this.pictureInputTarget.value = isNew ? "" : node.element.dataset.petPicture || "🐣"
     this.moodInputTarget.value = node.element.dataset.petMood || "5"
     this.moodOutputTarget.textContent = this.moodInputTarget.value
     this.descriptionInputTarget.value = node.element.dataset.petDescription || ""
+    this.updateEmojiHint()
 
     const readOnly = !editable
     this.toggleEditorReadOnly(readOnly)
