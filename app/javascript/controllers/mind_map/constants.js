@@ -1,0 +1,11 @@
+export const POSITION_RESPONSE = 4.2
+export const MEMBER_RADIUS_WOBBLE = 1.2
+export const PET_RADIUS_WOBBLE = 0.7
+export const PET_ANGLE_SWAY = 0.07
+export const MIN_SCALE = 0.55
+export const MAX_SCALE = 2.4
+export const ZOOM_STEP = 0.16
+export const DRAG_THRESHOLD = 6
+export const PAN_SLACK_RATIO = 0.16
+export const PAN_SLACK_MIN = 70
+export const PAN_SLACK_MAX = 220
