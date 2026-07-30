@@ -22,64 +22,73 @@
 		class="mind-map-scene"
 		data-controller="mind-map"
 		data-mind-map-current-member-id-value="<%= current_team_member&.id %>">
-		<svg class="mind-map-lines" data-mind-map-target="lineLayer"></svg>
+		<div class="mind-map-viewport" data-mind-map-target="viewport">
+			<svg class="mind-map-lines" data-mind-map-target="lineLayer"></svg>
 
-		<button class="node node-center" data-node-id="center" type="button">
-			Team Wachstum
-		</button>
-
-		<% @team_members.each do |member| %>
-			<button
-				class="node node-member <%= "node-own-member" if current_team_member&.id == member.id %>"
-				data-node-id="member-<%= member.id %>"
-				data-node-kind="member"
-				data-member-id="<%= member.id %>"
-				type="button">
-				<span><%= member.name %></span>
+			<button class="node node-center" data-node-id="center" type="button">
+				Team Wachstum
 			</button>
 
-			<% member.pets.order(:created_at).each do |pet| %>
-				<% mood_ratio = pet.mood.to_i.clamp(0, 10) * 10 %>
-				<% mood_hue = pet.mood.to_i.clamp(0, 10) * 12 %>
+			<% @team_members.each do |member| %>
 				<button
-					class="node node-pet"
-					data-node-id="pet-<%= pet.id %>"
-					data-node-kind="pet"
-					data-pet-id="<%= pet.id %>"
-					data-owner-id="<%= member.id %>"
-					data-editable="<%= current_team_member&.id == member.id %>"
-					data-pet-name="<%= pet.name %>"
-					data-pet-description="<%= pet.description.to_s %>"
-					data-pet-picture="<%= pet.picture %>"
-					data-pet-mood="<%= pet.mood %>"
-					style="--mood-percent: <%= mood_ratio %>%; --mood-hue: <%= mood_hue %>;"
+					class="node node-member <%= "node-own-member" if current_team_member&.id == member.id %>"
+					data-node-id="member-<%= member.id %>"
+					data-node-kind="member"
+					data-member-id="<%= member.id %>"
 					type="button">
-					<span class="pet-emoji"><%= pet.picture %></span>
-					<span class="pet-name"><%= pet.name %></span>
+					<span><%= member.name %></span>
 				</button>
-			<% end %>
 
-			<% if current_team_member&.id == member.id && member.pets.size < 3 %>
-				<button
-					class="node node-pet node-pet-new"
-					data-node-id="new-pet-<%= member.id %>"
-					data-node-kind="new-pet"
-					data-owner-id="<%= member.id %>"
-					data-editable="true"
-					data-pet-picture="➕"
-					data-pet-name="Add pet"
-					data-pet-description=""
-					data-pet-mood="5"
-					style="--mood-percent: 0%; --mood-hue: 210;"
-					type="button">
-					<span class="pet-emoji">➕</span>
-					<span class="pet-name">Add pet</span>
-				</button>
+				<% member.pets.order(:created_at).each do |pet| %>
+					<% mood_ratio = pet.mood.to_i.clamp(0, 10) * 10 %>
+					<% mood_hue = pet.mood.to_i.clamp(0, 10) * 12 %>
+					<button
+						class="node node-pet"
+						data-node-id="pet-<%= pet.id %>"
+						data-node-kind="pet"
+						data-pet-id="<%= pet.id %>"
+						data-owner-id="<%= member.id %>"
+						data-editable="<%= current_team_member&.id == member.id %>"
+						data-pet-name="<%= pet.name %>"
+						data-pet-description="<%= pet.description.to_s %>"
+						data-pet-picture="<%= pet.picture %>"
+						data-pet-mood="<%= pet.mood %>"
+						style="--mood-percent: <%= mood_ratio %>%; --mood-hue: <%= mood_hue %>;"
+						type="button">
+						<span class="pet-emoji"><%= pet.picture %></span>
+						<span class="pet-name"><%= pet.name %></span>
+					</button>
+				<% end %>
+
+				<% if current_team_member&.id == member.id && member.pets.size < 3 %>
+					<button
+						class="node node-pet node-pet-new"
+						data-node-id="new-pet-<%= member.id %>"
+						data-node-kind="new-pet"
+						data-owner-id="<%= member.id %>"
+						data-editable="true"
+						data-pet-picture="➕"
+						data-pet-name="Add pet"
+						data-pet-description=""
+						data-pet-mood="5"
+						style="--mood-percent: 0%; --mood-hue: 210;"
+						type="button">
+						<span class="pet-emoji">➕</span>
+						<span class="pet-name">Add pet</span>
+					</button>
+				<% end %>
 			<% end %>
-		<% end %>
+		</div>
+
+		<div class="mind-map-controls" aria-label="Mind map controls">
+			<button class="ghost-button map-control-button" type="button" data-action="mind-map#zoomOut" aria-label="Zoom out">-</button>
+			<span class="zoom-chip" data-mind-map-target="zoomLabel">100%</span>
+			<button class="ghost-button map-control-button" type="button" data-action="mind-map#zoomIn" aria-label="Zoom in">+</button>
+			<button class="ghost-button map-control-button" type="button" data-action="mind-map#resetView">Reset</button>
+		</div>
 
 		<aside class="pet-editor" data-mind-map-target="panel" hidden>
-			<button class="panel-close" type="button" data-action="mind-map#closePanel">×</button>
+			<button class="panel-close" type="button" data-action="mind-map#closePanel">x</button>
 			<h2 data-mind-map-target="panelTitle">Pet</h2>
 
 			<p class="panel-readonly" data-mind-map-target="readonlyHint" hidden>

@@ -74,7 +74,7 @@ body {
 
 .mind-map-scene {
 	position: relative;
-	min-height: 78vh;
+	min-height: clamp(460px, 78vh, 940px);
 	border-radius: 24px;
 	overflow: hidden;
 	border: 2px solid rgba(255, 255, 255, 0.7);
@@ -85,6 +85,19 @@ body {
 		repeating-linear-gradient(0deg, rgba(34, 51, 84, 0.034) 0 1px, transparent 1px 38px),
 		linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.2));
 	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), 0 24px 44px rgba(25, 45, 82, 0.14);
+}
+
+.mind-map-viewport {
+	position: absolute;
+	inset: 0;
+	transform-origin: 0 0;
+	touch-action: none;
+	cursor: grab;
+	will-change: transform;
+}
+
+.mind-map-scene.is-panning .mind-map-viewport {
+	cursor: grabbing;
 }
 
 .mind-map-lines {
@@ -112,6 +125,38 @@ body {
 	transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 	color: var(--ink);
 	will-change: left, top, transform;
+}
+
+.mind-map-controls {
+	position: absolute;
+	top: 0.9rem;
+	right: 0.9rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	z-index: 12;
+	padding: 0.35rem;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.72);
+	border: 1px solid rgba(75, 95, 145, 0.2);
+	backdrop-filter: blur(4px);
+}
+
+.map-control-button {
+	min-width: 2.1rem;
+	padding: 0.45rem 0.65rem;
+	line-height: 1;
+}
+
+.zoom-chip {
+	min-width: 3.1rem;
+	text-align: center;
+	font-weight: 700;
+	font-size: 0.86rem;
+	padding: 0.25rem 0.4rem;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(85, 106, 156, 0.24);
 }
 
 .node:hover {
@@ -416,8 +461,24 @@ body {
 }
 
 @media (max-width: 900px) {
+	.app-shell {
+		padding: 0.7rem;
+	}
+
+	.app-header {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 0.65rem 0.2rem;
+	}
+
+	.header-actions {
+		width: 100%;
+		justify-content: space-between;
+	}
+
 	.mind-map-scene {
-		min-height: 72vh;
+		min-height: clamp(390px, 72vh, 760px);
+		border-radius: 18px;
 	}
 
 	.node-center {
@@ -436,8 +497,54 @@ body {
 		font-size: 0.75rem;
 	}
 
+	.mind-map-controls {
+		top: 0.65rem;
+		right: 0.65rem;
+	}
+
+	.mind-map-hint {
+		left: 0.65rem;
+		bottom: 0.65rem;
+		font-size: 0.76rem;
+	}
+
+	.pet-editor {
+		left: 0.65rem;
+		right: 0.65rem;
+		bottom: 0.65rem;
+		width: auto;
+		max-height: 76%;
+		overflow: auto;
+	}
+
 	.member-button-grid {
 		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 560px) {
+	.header-actions {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.45rem;
+	}
+
+	.current-member-chip {
+		max-width: 100%;
+	}
+
+	.mind-map-controls {
+		gap: 0.25rem;
+		padding: 0.25rem;
+	}
+
+	.map-control-button {
+		min-width: 1.9rem;
+		padding: 0.4rem 0.55rem;
+	}
+
+	.mind-map-hint {
+		max-width: calc(100% - 1.3rem);
 	}
 }
 
