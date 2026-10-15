@@ -15,7 +15,7 @@ jobs:
     runs-on: [self-hosted]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Run containers
         run: >
           ROUTER_NAME=virtual_pets_staging
